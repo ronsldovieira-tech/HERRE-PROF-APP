@@ -839,8 +839,19 @@ criarPaginaBalancos();
   const CHAVE_FIN = "herre_prof_financeiro";
 
   function carregarFinanceiro(){
-    return JSON.parse(localStorage.getItem(CHAVE_FIN) || localStorage.getItem("financeiro") || "[]");
-  }
+  const dados = JSON.parse(localStorage.getItem(CHAVE_FIN) || "[]");
+
+  const corrigidos = dados.map(x => ({
+    ...x,
+    status: x.status || (x.pago === true ? "Pago" : "Pendente")
+  }));
+
+  localStorage.setItem(CHAVE_FIN, JSON.stringify(corrigidos));
+
+  return corrigidos;
+}
+    
+  
 
   function salvarFinanceiro(lista){
     localStorage.setItem(CHAVE_FIN, JSON.stringify(lista));
