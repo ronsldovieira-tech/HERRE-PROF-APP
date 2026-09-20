@@ -289,5 +289,240 @@ function delAluno(i){let a=JSON.parse(localStorage.alunos||"[]");a.splice(i,1);l
 function renderPersonal(d,btn){document.querySelectorAll('#personal .daybtn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');let arr=personalFight[d]||[];document.getElementById('personalLista').innerHTML=arr.length?'<div class="schedule">'+arr.map(x=>`<div class="slot"><div class="time">${x[0]}</div><div class="name">${x[1]}</div><div class="meta">PERSONAL FIGHT</div></div>`).join('')+'</div>':'<div class="card empty">Nenhum Personal Fight cadastrado para este dia.</div>'}
 function renderAgenda(){let out=[];Object.entries(personalFight).forEach(([d,arr])=>arr.forEach(x=>out.push([d,x[0],x[1],'Personal Fight'])));aulasJiuJitsu.forEach(x=>out.push([x[0],x[1],x[2],'Jiu-Jitsu']));[['TERÇA','07:30','Boxe','Boxe'],['TERÇA','18:30','Boxe Infantil','Boxe Infantil'],['TERÇA','20:30','Boxe','Boxe'],['QUINTA','07:30','Boxe','Boxe'],['QUINTA','20:30','Boxe','Boxe'],['SEGUNDA','19:30','Funcional','Funcional'],['QUARTA','06:00','Funcional','Funcional'],['SEXTA','06:00','Funcional','Funcional'],['SEXTA','19:30','Funcional','Funcional']].forEach(x=>out.push(x));out.sort((a,b)=>a[0].localeCompare(b[0]));document.getElementById('agendaLista').innerHTML='<div class="schedule">'+out.map(x=>`<div class="slot"><div class="time">${x[1]}</div><div class="name">${x[2]}</div><div class="meta">${x[0]} • ${x[3]}</div></div>`).join('')+'</div>'}
 renderAula();renderFuncional();renderPersonal("SEGUNDA",document.querySelector("#personal .daybtn"));renderAgenda();render();
+/* ===== GERENCIADOR PERSONAL FIGHT ===== */
+
+const PF_STORAGE = "herre_personal_fight";
+
+function carregarPersonalFight(){
+  let salvo = localStorage.getItem(PF_STORAGE);
+
+  if(salvo){
+    try{
+      return JSON.parse(salvo);
+    }catch(e){}
+  }
+
+  let base = {};
+  Object.keys(personalFight).forEach(d=>{
+    base[d] = personalFight[d].map(x=>[x[0],x[1]]);
+  });
+
+  localStorage.setItem(PF_STORAGE,JSON.stringify(base));
+  return base;
+}
+
+function salvarPersonalFight(dados){
+  localStorage.setItem(PF_STORAGE,JSON.stringify(dados));
+}
+
+function adicionarPersonal(){
+  let nome=document.getElementById("pfNome").value.trim();
+  let dia=document.getElementById("pfDia").value;
+  let hora=document.getElementById("pfHora").value.trim();
+
+  if(!nome || !dia || !hora){
+    alert("Preencha aluno, dia e horário.");
+    return;
+  }
+
+  let dados=carregarPersonalFight();
+
+  if(!dados[dia]) dados[dia]=[];
+
+  dados[dia].push([hora,nome]);
+
+  dados[dia].sort((a,b)=>a[0].localeCompare(b[0]));
+
+  salvarPersonalFight(dados);
+
+  document.getElementById("pfNome").value="";
+  document.getElementById("pfHora").value="";
+
+  renderPersonal(dia);
+  alert("Horário do Personal Fight adicionado!");
+}
+
+function excluirPersonal(dia,index){
+  if(!confirm("Excluir este horário do Personal Fight?")) return;
+
+  let dados=carregarPersonalFight();
+
+  dados[dia].splice(index,1);
+
+  salvarPersonalFight(dados);
+
+  renderPersonal(dia);
+}
+
+function editarPersonal(dia,index){
+  let dados=carregarPersonalFight();
+  let item=dados[dia][index];
+
+  let novoNome=prompt("Nome do aluno:",item[1]);
+  if(novoNome===null) return;
+
+  novoNome=novoNome.trim();
+  if(!novoNome) return;
+
+  let novoHorario=prompt("Horário:",item[0]);
+  if(novoHorario===null) return;
+
+  novoHorario=novoHorario.trim();
+  if(!novoHorario) return;
+
+  dados[dia][index]=[novoHorario,novoNome];
+
+  dados[dia].sort((a,b)=>a[0].localeCompare(b[0]));
+
+  salvarPersonalFight(dados);
+
+  renderPersonal(dia);
+}
+
+function renderPersonal(d,btn){
+
+  document.querySelectorAll('#personal .daybtn')
+    .forEach(b=>b.classList.remove('active'));
+
+  if(btn) btn.classList.add('active');
+
+  let dados=carregarPersonalFight();
+  let arr=dados[d]||[];
+
+  let lista=document.getElementById("personalLista");
+
+  lista.innerHTML=`
+
+    <div class="card">
+
+      <h3>➕ Gerenciar Personal Fight</h3>
+
+      <p class="muted">
+        Adicione novos alunos e horários diretamente pelo aplicativo.
+      </p>
+
+      <input id="pfNome" placeholder="Nome do aluno">
+
+      <select id="pfDia">
+        <option value="SEGUNDA">SEGUNDA</option>
+        <option value="TERÇA">TERÇA</option>
+        <option value="QUARTA">QUARTA</option>
+        <option value="QUINTA">QUINTA</option>
+        <option value="SEXTA">SEXTA</option>
+      </select>
+
+      <input
+        id="pfHora"
+        type="time"
+        placeholder="Horário"
+      >
+
+      <button
+        class="primary"
+        onclick="adicionarPersonal()">
+        ➕ ADICIONAR HORÁRIO
+      </button>
+
+    </div>
+
+    <div class="card">
+
+      <h3>📅 ${d}</h3>
+
+      ${
+        arr.length
+        ?
+        `<div class="schedule">
+          ${arr.map((x,i)=>`
+
+            <div class="slot">
+
+              <div class="time">${x[0]}</div>
+
+              <div class="name">🥊 ${x[1]}</div>
+
+              <div class="meta">
+                PERSONAL FIGHT
+              </div>
+
+              <div class="row" style="margin-top:10px">
+
+                <button
+                  onclick="editarPersonal('${d}',${i})">
+                  ✏️ Editar
+                </button>
+
+                <button
+                  onclick="excluirPersonal('${d}',${i})">
+                  🗑️ Excluir
+                </button>
+
+              </div>
+
+            </div>
+
+          `).join("")}
+        </div>`
+        :
+        `<div class="empty">
+          Nenhum horário cadastrado para este dia.
+        </div>`
+      }
+
+    </div>
+  `;
+
+  document.getElementById("pfDia").value=d;
+}
+
+/* Atualiza a agenda geral usando os horários editáveis */
+
+function renderAgenda(){
+
+  let out=[];
+
+  let dados=carregarPersonalFight();
+
+  Object.entries(dados).forEach(([d,arr])=>{
+    arr.forEach(x=>{
+      out.push([d,x[0],x[1],"Personal Fight"]);
+    });
+  });
+
+  aulasJiuJitsu.forEach(x=>{
+    out.push([x[0],x[1],x[2],"Jiu-Jitsu"]);
+  });
+
+  [
+    ["TERÇA","07:30","Boxe","Boxe"],
+    ["TERÇA","18:30","Boxe Infantil","Boxe Infantil"],
+    ["TERÇA","20:30","Boxe","Boxe"],
+    ["QUINTA","07:30","Boxe","Boxe"],
+    ["QUINTA","20:30","Boxe","Boxe"],
+    ["SEGUNDA","19:30","Funcional","Funcional"],
+    ["QUARTA","06:00","Funcional","Funcional"],
+    ["SEXTA","06:00","Funcional","Funcional"],
+    ["SEXTA","19:30","Funcional","Funcional"]
+  ].forEach(x=>out.push(x));
+
+  out.sort((a,b)=>a[0].localeCompare(b[0]) || a[1].localeCompare(b[1]));
+
+  document.getElementById("agendaLista").innerHTML=
+    '<div class="schedule">'+
+    out.map(x=>`
+      <div class="slot">
+        <div class="time">${x[1]}</div>
+        <div class="name">${x[2]}</div>
+        <div class="meta">${x[0]} • ${x[3]}</div>
+      </div>
+    `).join("")+
+    '</div>';
+}
+
+/* Inicialização */
+
+carregarPersonalFight();
+renderPersonal("SEGUNDA",document.querySelector("#personal .daybtn"));
+renderAgenda();
 </script>
 </body></html>
