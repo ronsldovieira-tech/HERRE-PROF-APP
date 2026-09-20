@@ -833,5 +833,176 @@ function criarPaginaBalancos(){
 /* Cria o módulo */
 
 criarPaginaBalancos();
+  /* ===== FINANCEIRO HERRE PROF ===== */
+(function(){
+
+  const CHAVE_FIN = "herre_prof_financeiro";
+
+  function carregarFinanceiro(){
+    return JSON.parse(localStorage.getItem(CHAVE_FIN) || "[]");
+  }
+
+  function salvarFinanceiro(lista){
+    localStorage.setItem(CHAVE_FIN, JSON.stringify(lista));
+  }
+
+  function moeda(v){
+    return Number(v || 0).toLocaleString("pt-BR",{
+      style:"currency",
+      currency:"BRL"
+    });
+  }
+
+  function renderFinanceiro(){
+
+    const dados = carregarFinanceiro();
+
+    const pagos = dados.filter(x => x.status === "Pago");
+
+    const totalRecebido = pagos.reduce(
+      (s,x) => s + Number(x.valor || 0), 0
+    );
+
+    const pendentes = dados.filter(x => x.status !== "Pago");
+
+    let area = document.getElementById("financeiroHerre");
+
+    if(!area){
+      area = document.createElement("div");
+      area.id = "financeiroHerre";
+      area.className = "card";
+      
+      const balancos = document.getElementById("balancos");
+
+      if(balancos){
+        balancos.appendChild(area);
+      }else{
+        document.querySelector("main").appendChild(area);
+      }
+    }
+
+    area.innerHTML = `
+      <h2>💰 <span class="gold">Financeiro HERRE PROF</span></h2>
+
+      <div class="grid">
+
+        <div class="card">
+          <h3>💵 Recebido</h3>
+          <strong>${moeda(totalRecebido)}</strong>
+        </div>
+
+        <div class="card">
+          <h3>⏳ Pendentes</h3>
+          <strong>${pendentes.length}</strong>
+        </div>
+
+      </div>
+
+      <hr>
+
+      <h3>➕ Registrar mensalidade</h3>
+
+      <input id="finAluno"
+        placeholder="Nome do aluno">
+
+      <input id="finValor"
+        type="number"
+        step="0.01"
+        placeholder="Valor da mensalidade">
+
+      <input id="finVencimento"
+        type="date">
+
+      <select id="finStatus">
+        <option value="Pendente">Pendente</option>
+        <option value="Pago">Pago</option>
+      </select>
+
+      <button class="primary"
+        onclick="adicionarMensalidadeHERRE()">
+        💰 REGISTRAR MENSALIDADE
+      </button>
+
+      <hr>
+
+      <h3>📋 Mensalidades</h3>
+
+      <div id="listaFinanceiroHerre">
+        ${dados.map((x,i)=>`
+          <div class="card">
+            <strong>${x.aluno}</strong><br>
+            ${moeda(x.valor)}<br>
+            Vencimento: ${x.vencimento || "-"}<br>
+            Status:
+            <b>${x.status}</b>
+            <br><br>
+            <button onclick="alternarPagamentoHERRE(${i})">
+              ${x.status === "Pago" ? "↩️ Marcar pendente" : "✅ Marcar pago"}
+            </button>
+
+            <button onclick="excluirMensalidadeHERRE(${i})">
+              🗑️ Excluir
+            </button>
+          </div>
+        `).join("") || "<p class='muted'>Nenhuma mensalidade cadastrada.</p>"}
+      </div>
+    `;
+  }
+
+  window.adicionarMensalidadeHERRE = function(){
+
+    const aluno = document.getElementById("finAluno").value.trim();
+    const valor = document.getElementById("finValor").value;
+    const vencimento = document.getElementById("finVencimento").value;
+    const status = document.getElementById("finStatus").value;
+
+    if(!aluno || !valor){
+      alert("Informe o nome do aluno e o valor.");
+      return;
+    }
+
+    const dados = carregarFinanceiro();
+
+    dados.push({
+      aluno,
+      valor:Number(valor),
+      vencimento,
+      status
+    });
+
+    salvarFinanceiro(dados);
+
+    alert("Mensalidade registrada!");
+
+    renderFinanceiro();
+  };
+
+  window.alternarPagamentoHERRE = function(i){
+
+    const dados = carregarFinanceiro();
+
+    dados[i].status =
+      dados[i].status === "Pago"
+      ? "Pendente"
+      : "Pago";
+
+    salvarFinanceiro(dados);
+    renderFinanceiro();
+  };
+
+  window.excluirMensalidadeHERRE = function(i){
+
+    const dados = carregarFinanceiro();
+
+    if(confirm("Excluir esta mensalidade?")){
+      dados.splice(i,1);
+      salvarFinanceiro(dados);
+      renderFinanceiro();
+    }
+  };
+
+  renderFinanceiro();
+
+})();
 </script>
 </body></html>
