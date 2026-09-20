@@ -655,7 +655,7 @@ function dataFinanceiro(f){
   let pagamentosAno=0;
 
   finance.forEach(f=>{
-    if(f.pago!==true) return;
+    if(f.status!=="Pago") return;
     const valor=Number(f.valor || f.vlr || f.mensalidade || 0);
     const data=dataFinanceiro(f);
     if(!data || data.getFullYear()!==anoSelecionado) return;
