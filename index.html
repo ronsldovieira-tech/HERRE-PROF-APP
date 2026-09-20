@@ -964,11 +964,12 @@ criarPaginaBalancos();
     const dados = carregarFinanceiro();
 
     dados.push({
-      aluno,
-      valor:Number(valor),
-      vencimento,
-      status
-    });
+  aluno,
+  valor:Number(valor),
+  vencimento,
+  status,
+  dataPagamento: status === "Pago" ? new Date().toLocaleDateString("pt-BR") : ""
+});
 
     salvarFinanceiro(dados);
 
