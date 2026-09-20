@@ -524,5 +524,455 @@ function renderAgenda(){
 carregarPersonalFight();
 renderPersonal("SEGUNDA",document.querySelector("#personal .daybtn"));
 renderAgenda();
+/* ===== BALANÇOS HERRE PROF ===== */
+
+const BAL_MOV = "herre_alunos_movimentos";
+
+function brl(v){
+  return Number(v||0).toLocaleString("pt-BR",{
+    style:"currency",
+    currency:"BRL"
+  });
+}
+
+function lerFinanceiro(){
+  try{
+    return JSON.parse(localStorage.getItem("financeiro") || "[]");
+  }catch(e){
+    return [];
+  }
+}
+
+function lerAlunos(){
+  try{
+    return JSON.parse(localStorage.getItem("alunos") || "[]");
+  }catch(e){
+    return [];
+  }
+}
+
+function lerMovimentos(){
+  try{
+    return JSON.parse(localStorage.getItem(BAL_MOV) || "[]");
+  }catch(e){
+    return [];
+  }
+}
+
+function salvarMovimentos(a){
+  localStorage.setItem(BAL_MOV,JSON.stringify(a));
+}
+
+function registrarMovimentoAluno(){
+
+  const nome=document.getElementById("balAluno").value.trim();
+  const tipo=document.getElementById("balTipo").value;
+  const data=document.getElementById("balData").value;
+  const modalidade=document.getElementById("balModalidade").value;
+
+  if(!nome || !data){
+    alert("Informe o aluno e a data.");
+    return;
+  }
+
+  let a=lerMovimentos();
+
+  a.push({
+    nome:nome,
+    tipo:tipo,
+    data:data,
+    modalidade:modalidade
+  });
+
+  salvarMovimentos(a);
+
+  document.getElementById("balAluno").value="";
+
+  renderBalancos();
+  alert("Movimento registrado com sucesso!");
+}
+
+function excluirMovimentoAluno(i){
+
+  if(!confirm("Excluir este registro?")) return;
+
+  let a=lerMovimentos();
+
+  a.splice(i,1);
+
+  salvarMovimentos(a);
+
+  renderBalancos();
+}
+
+function dataFinanceiro(f){
+
+  const raw=f.dataPagamento || f.data || "";
+
+  if(!raw) return null;
+
+  if(/^\d{2}\/\d{2}\/\d{4}$/.test(raw)){
+
+    const partes=raw.split("/").map(Number);
+
+    return new Date(
+      partes[2],
+      partes[1]-1,
+      partes[0]
+    );
+
+  }
+
+  const d=new Date(raw);
+
+  return isNaN(d) ? null : d;
+}
+  function renderBalancos(){
+
+  const finance=lerFinanceiro();
+  const alunos=lerAlunos();
+  const movimentos=lerMovimentos();
+
+  const anoAtual=new Date().getFullYear();
+
+  let totalAno=0;
+  let totalMes=0;
+  let pagos=0;
+  let pendentes=0;
+
+  const hoje=new Date();
+  const mesAtual=String(hoje.getMonth()+1).padStart(2,"0");
+
+  finance.forEach(f=>{
+
+    const valor=Number(
+      f.valor ||
+      f.vlr ||
+      f.mensalidade ||
+      0
+    );
+
+    const pago=f.pago===true;
+const data=dataFinanceiro(f);
+const noAno=data && data.getFullYear()===anoAtual;
+    iif(pago && noAno){
+
+      totalAno+=valor;
+      pagos++;
+
+      if(pago && noAno){
+
+  totalAno+=valor;
+  pagos++;
+
+  const mesmoMes =
+    data &&
+    data.getFullYear()===anoAtual &&
+    data.getMonth()===hoje.getMonth();
+
+  if(mesmoMes){
+    totalMes+=valor;
+  }
+
+}else if(!pago && (!data || data.getFullYear()===anoAtual)){
+
+  pendentes++;
+
+}
+
+});
+
+      
+        
+        
+          
+          
+        
+      
+  
+      
+
+    
+              
+  
+
+    
+    
+  
+
+  /* Receita mensal */
+
+  const meses=[
+    "Janeiro","Fevereiro","Março","Abril",
+    "Maio","Junho","Julho","Agosto",
+    "Setembro","Outubro","Novembro","Dezembro"
+  ];
+
+  let mensal=new Array(12).fill(0);
+
+  finance.forEach(f=>{
+
+    if(f.pago!==true) return;
+
+    const valor=Number(
+      f.valor ||
+      f.vlr ||
+      f.mensalidade ||
+      0
+    );
+
+    const data=dataFinanceiro(f);
+
+if(data && data.getFullYear()===anoAtual){
+
+  mensal[data.getMonth()]+=valor;
+
+}
+
+    
+
+    
+      
+    
+
+  });
+
+  const movimentosAno=movimentos.filter(m=>
+    String(m.data).startsWith(String(anoAtual))
+  );
+
+  const entradas=movimentosAno.filter(
+    m=>m.tipo==="ENTRADA"
+  ).length;
+
+  const saidas=movimentosAno.filter(
+    m=>m.tipo==="SAÍDA"
+  ).length;
+
+  const ativos=alunos.length;
+
+  const saldo=entradas-saidas;
+
+  let html=`
+
+  <div class="card">
+
+    <h3>💰 Resumo Financeiro ${anoAtual}</h3>
+
+    <div class="grid">
+
+      <div class="card">
+        <h3>💰 Ano</h3>
+        <div class="seq">${brl(totalAno)}</div>
+      </div>
+
+      <div class="card">
+        <h3>📅 Mês atual</h3>
+        <div class="seq">${brl(totalMes)}</div>
+      </div>
+
+      <div class="card">
+        <h3>✅ Pagamentos</h3>
+        <div class="seq">${pagos}</div>
+      </div>
+
+      <div class="card">
+        <h3>⏳ Pendentes</h3>
+        <div class="seq">${pendentes}</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h3>📊 Receitas por mês</h3>
+
+    ${mensal.map((v,i)=>`
+
+      <div class="row"
+           style="justify-content:space-between;
+                  padding:8px 0;
+                  border-bottom:1px solid #333">
+
+        <span>${meses[i]}</span>
+
+        <b class="gold">${brl(v)}</b>
+
+      </div>
+
+    `).join("")}
+
+  </div>
+
+  <div class="card">
+
+    <h3>👥 Balanço de Alunos ${anoAtual}</h3>
+
+    <div class="grid">
+
+      <div class="card">
+        <h3>👥 Ativos</h3>
+        <div class="seq">${ativos}</div>
+      </div>
+
+      <div class="card">
+        <h3>➕ Entraram</h3>
+        <div class="seq">${entradas}</div>
+      </div>
+
+      <div class="card">
+        <h3>➖ Saíram</h3>
+        <div class="seq">${saidas}</div>
+      </div>
+
+      <div class="card">
+        <h3>📈 Saldo</h3>
+        <div class="seq">${saldo}</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h3>👤 Registrar entrada ou saída</h3>
+
+    <input
+      id="balAluno"
+      placeholder="Nome do aluno"
+    >
+
+    <select id="balModalidade">
+
+      <option>Boxe</option>
+      <option>Boxe Infantil</option>
+      <option>Jiu-Jitsu</option>
+      <option>Funcional</option>
+      <option>Personal Fight</option>
+
+    </select>
+
+    <select id="balTipo">
+
+      <option value="ENTRADA">➕ Entrada</option>
+      <option value="SAÍDA">➖ Saída</option>
+
+    </select>
+
+    <label>Data</label>
+
+    <input
+      id="balData"
+      type="date"
+      value="${new Date().toISOString().slice(0,10)}"
+    >
+
+    <button
+      class="primary"
+      onclick="registrarMovimentoAluno()">
+
+      💾 Registrar movimento
+
+    </button>
+
+  </div>
+
+  <div class="card">
+
+    <h3>📋 Histórico de alunos</h3>
+
+    ${
+      movimentos.length
+      ?
+      movimentos.slice().reverse().map((m,i)=>`
+
+        <div class="slot">
+
+          <div class="name">
+            ${m.tipo==="ENTRADA" ? "🟢" : "🔴"}
+            ${m.nome}
+          </div>
+
+          <div class="meta">
+            ${m.tipo} • ${m.modalidade} • ${m.data}
+          </div>
+
+          <button
+            style="margin-top:8px"
+            onclick="excluirMovimentoAluno(${movimentos.length-1-i})">
+
+            🗑️ Excluir
+
+          </button>
+
+        </div>
+
+      `).join("")
+      :
+      `<p class="empty">
+        Nenhum movimento de aluno registrado ainda.
+      </p>`
+    }
+
+  </div>
+
+  `;
+
+  document.getElementById("balancosLista").innerHTML=html;
+}
+
+
+/* Cria a página Balanços */
+
+function criarPaginaBalancos(){
+
+  const nav=document.querySelector("nav");
+
+  if(!document.querySelector('nav button[data-page="balancos"]')){
+
+    const b=document.createElement("button");
+
+    b.textContent="📊 Balanços";
+    b.dataset.page="balancos";
+
+    b.onclick=()=>show("balancos");
+
+    nav.appendChild(b);
+  }
+
+  if(!document.getElementById("balancos")){
+
+    const sec=document.createElement("section");
+
+    sec.id="balancos";
+    sec.className="page";
+
+    sec.innerHTML=`
+
+      <h1>
+        📊 <span class="gold">Balanços</span>
+      </h1>
+
+      <p class="muted">
+        Controle financeiro e evolução dos alunos do HERRE PROF.
+      </p>
+
+      <div id="balancosLista"></div>
+
+    `;
+
+    document.querySelector("main").appendChild(sec);
+  }
+
+  renderBalancos();
+}
+
+
+/* Cria o módulo */
+
+criarPaginaBalancos();
 </script>
 </body></html>
