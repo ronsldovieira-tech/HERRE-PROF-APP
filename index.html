@@ -88,6 +88,27 @@ footer{text-align:center;color:#777;padding:30px}.steps{display:grid;grid-templa
 <button class="primary" onclick="addAluno()">Adicionar aluno</button></div>
 <div class="card"><h3>Como fica</h3><p class="muted">Cada aluno é salvo neste aparelho com modalidade, dia e horário. Você pode excluir quando quiser.</p></div>
 <div id="lista"></div>
+  <div class="card">
+<h3>💰 Financeiro dos Alunos</h3>
+
+<input id="finAluno" placeholder="Nome do aluno">
+
+<input id="finValor" type="number" placeholder="Mensalidade (R$)" inputmode="decimal">
+
+<label>Vencimento</label>
+<input id="finVencimento" type="date">
+
+<select id="finForma">
+<option>PIX</option>
+<option>Dinheiro</option>
+<option>Cartão</option>
+<option>Transferência</option>
+</select>
+
+<button class="primary" onclick="registrarMensalidade()">Registrar mensalidade</button>
+
+<div id="financeiroLista"></div>
+</div>
 </section>
 
 <section id="personal" class="page">
@@ -185,7 +206,84 @@ document.getElementById("aulafuncional").innerHTML=`
 function paint(){let e=document.getElementById("timer");if(e)e.textContent=String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0")}
 function startTimer(){if(iv)return;iv=setInterval(()=>{t--;paint();if(t<=0){clearInterval(iv);iv=null;t=60;paint();alert("Round finalizado! TROQUE AS FUNÇÕES.");}},1000)}
 function resetTimer(){clearInterval(iv);iv=null;t=60;paint()}
-function addAluno(){let n=document.getElementById("nome").value.trim(),m=document.getElementById("modal").value,d=document.getElementById("diaAluno").value,h=document.getElementById("horaAluno").value.trim();if(!n)return alert("Digite o nome do aluno.");let a=JSON.parse(localStorage.alunos||"[]");a.push({n,m,d,h});localStorage.alunos=JSON.stringify(a);document.getElementById("nome").value="";document.getElementById("horaAluno").value="";render();alert("Aluno cadastrado com sucesso!")}
+function registrarMensalidade(){
+let nome=document.getElementById("finAluno").value.trim();
+let valor=parseFloat(document.getElementById("finValor").value);
+let vencimento=document.getElementById("finVencimento").value;
+let forma=document.getElementById("finForma").value;
+
+if(!nome||!valor||!vencimento){
+alert("Preencha aluno, valor e vencimento.");
+return;
+}
+
+let f=JSON.parse(localStorage.financeiro||"[]");
+f.push({
+id:Date.now(),
+aluno:nome,
+valor:valor,
+vencimento:vencimento,
+forma:forma,
+pago:false,
+dataPagamento:""
+});
+
+localStorage.financeiro=JSON.stringify(f);
+
+document.getElementById("finAluno").value="";
+document.getElementById("finValor").value="";
+document.getElementById("finVencimento").value="";
+
+renderFinanceiro();
+}
+
+function renderFinanceiro(){
+let f=JSON.parse(localStorage.financeiro||"[]");
+let hoje=new Date().toISOString().split("T")[0];
+
+document.getElementById("financeiroLista").innerHTML=f.length?
+f.map((x,i)=>{
+let status=x.pago?"PAGO":(x.vencimento<hoje?"ATRASADO":"PENDENTE");
+return `<div class="card">
+<b>${x.aluno}</b><br>
+💰 R$ ${Number(x.valor).toFixed(2).replace(".",",")}<br>
+📅 Vencimento: ${x.vencimento}<br>
+💳 ${x.forma}<br>
+<b>${status}</b>
+${x.dataPagamento?`<br>✅ Pago em: ${x.dataPagamento}`:""}
+<br><br>
+${x.pago
+?`<button onclick="desfazerPagamento(${i})">Desfazer pagamento</button>`
+:`<button class="primary" onclick="marcarPago(${i})">Marcar como PAGO</button>`}
+<button onclick="excluirMensalidade(${i})">Excluir</button>
+</div>`;
+}).join("")
+:"<div class='card empty'>Nenhuma mensalidade cadastrada.</div>";
+}
+
+function marcarPago(i){
+let f=JSON.parse(localStorage.financeiro||"[]");
+f[i].pago=true;
+f[i].dataPagamento=new Date().toLocaleDateString("pt-BR");
+localStorage.financeiro=JSON.stringify(f);
+renderFinanceiro();
+}
+
+function desfazerPagamento(i){
+let f=JSON.parse(localStorage.financeiro||"[]");
+f[i].pago=false;
+f[i].dataPagamento="";
+localStorage.financeiro=JSON.stringify(f);
+renderFinanceiro();
+}
+
+function excluirMensalidade(i){
+let f=JSON.parse(localStorage.financeiro||"[]");
+f.splice(i,1);
+localStorage.financeiro=JSON.stringify(f);
+renderFinanceiro();
+}
+  function addAluno(){let n=document.getElementById("nome").value.trim(),m=document.getElementById("modal").value,d=document.getElementById("diaAluno").value,h=document.getElementById("horaAluno").value.trim();if(!n)return alert("Digite o nome do aluno.");let a=JSON.parse(localStorage.alunos||"[]");a.push({n,m,d,h});localStorage.alunos=JSON.stringify(a);document.getElementById("nome").value="";document.getElementById("horaAluno").value="";render();alert("Aluno cadastrado com sucesso!")}
 function render(){let a=JSON.parse(localStorage.alunos||"[]");document.getElementById("lista").innerHTML=a.length?a.map((x,i)=>`<div class="card"><b>${x.n}</b><br><span class="badge">${x.m}</span> <span class="badge">${x.d||"—"} • ${x.h||"—"}</span><br><button onclick="delAluno(${i})">Excluir</button></div>`).join(""):"<div class='card empty'>Nenhum aluno cadastrado ainda.</div>"}
 function delAluno(i){let a=JSON.parse(localStorage.alunos||"[]");a.splice(i,1);localStorage.alunos=JSON.stringify(a);render()}
 function renderPersonal(d,btn){document.querySelectorAll('#personal .daybtn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');let arr=personalFight[d]||[];document.getElementById('personalLista').innerHTML=arr.length?'<div class="schedule">'+arr.map(x=>`<div class="slot"><div class="time">${x[0]}</div><div class="name">${x[1]}</div><div class="meta">PERSONAL FIGHT</div></div>`).join('')+'</div>':'<div class="card empty">Nenhum Personal Fight cadastrado para este dia.</div>'}
