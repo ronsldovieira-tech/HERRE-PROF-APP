@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080808">
+<title>HERRE PROF — Fight & Defense</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#080808;color:#eee;font-family:Arial,sans-serif}
+header{background:#0d0d0d;border-bottom:1px solid #8b6a18;padding:16px;text-align:center;position:sticky;top:0;z-index:5}
+.logo{font-size:27px;font-weight:900;color:#d7aa35}.sub{font-size:10px;letter-spacing:2.5px;color:#aaa}
+nav{display:flex;gap:7px;overflow:auto;padding:10px;background:#111;position:sticky;top:74px;z-index:4}
+nav button,.card button,.daybtn{border:1px solid #705719;background:#171717;color:#eee;border-radius:10px;padding:11px 13px;white-space:nowrap}
+nav button.active,.primary,.daybtn.active{background:#c99b2b!important;color:#080808!important;font-weight:800}
+main{padding:16px;max-width:950px;margin:auto}.page{display:none}.page.active{display:block}
+h1,h2{margin-top:8px}.gold{color:#d7aa35}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}
+.card{background:#131313;border:1px solid #333;border-radius:14px;padding:15px;margin:10px 0}.card h3{margin:0 0 8px;color:#d7aa35}
+.day{border-left:4px solid #c89b2c;padding-left:12px}.seq{font-size:20px;font-weight:800;line-height:1.45}
+.muted{color:#aaa}.row{display:flex;gap:8px;flex-wrap:wrap}.timer{font-size:54px;text-align:center;font-weight:900;color:#d7aa35;margin:15px}
+input,select{width:100%;padding:12px;border-radius:9px;border:1px solid #444;background:#0e0e0e;color:#fff;margin:5px 0 10px}
+ul{padding-left:20px;line-height:1.7}.badge{display:inline-block;padding:5px 8px;border-radius:20px;background:#2a2110;color:#d7aa35;font-size:12px}
+footer{text-align:center;color:#777;padding:30px}.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:12px 0}
+.step{background:#191919;border:1px solid #3b3b3b;border-radius:10px;padding:12px;text-align:center}.step b{display:block;color:#d7aa35;margin-bottom:5px}
+.daytabs{display:flex;gap:7px;overflow:auto;margin:10px 0;padding-bottom:4px}.daybtn{min-width:90px}
+</style>
+</head>
+<body>
+<header><div class="logo">👑 HP HERRE PROF</div><div class="sub">FIGHT AND DEFENSE • PERFORMANCE • FORÇA • EVOLUÇÃO</div></header>
+<nav>
+<button class="active" data-page="inicio">Início</button><button data-page="treinos">Treinos</button>
+<button data-page="boxe">Boxe</button><button data-page="alunos">Alunos</button><button data-page="agenda">Agenda</button>
+</nav>
+<main>
+<section id="inicio" class="page active">
+<h1>Bem-vindo ao <span class="gold">HERRE PROF</span></h1>
+<div class="card"><h3>🥊 Semana de Boxe</h3><p>Manopla → Transferência → Reação → Aplicação.</p>
+<button class="primary" onclick="show('boxe')">Abrir treino da semana</button></div>
+<div class="grid"><div class="card"><h3>🥊 Boxe</h3><p class="muted">5 aulas progressivas.</p></div><div class="card"><h3>🥋 Jiu-Jitsu</h3><p class="muted">Treinos técnicos.</p></div><div class="card"><h3>💪 Funcional</h3><p class="muted">Força e condicionamento.</p></div><div class="card"><h3>👥 Alunos</h3><p class="muted">Cadastro local.</p></div></div>
+</section>
+
+<section id="treinos" class="page">
+<h1>Treinos <span class="gold">HERRE PROF</span></h1>
+<div class="day card"><h3>Segunda — Base + 1–2</h3><p>Jab → Direto → saída. Fundamentos e precisão.</p></div>
+<div class="day card"><h3>Terça — Ataque + Defesa</h3><p>Jab → direto → esquiva → direto.</p></div>
+<div class="day card"><h3>Quarta — Combinação</h3><p>Jab → direto → cruzado → esquiva → saída.</p></div>
+<div class="day card"><h3>Quinta — Distância + Contra-ataque</h3><p>Jab → recuo → jab; esquiva → direto.</p></div>
+<div class="day card"><h3>Sexta — Integração</h3><p>Aplicação das técnicas da semana em rounds controlados.</p></div>
+</section>
+
+<section id="boxe" class="page">
+<h1>🥊 Boxe — <span class="gold">Manopla → Transferência</span></h1>
+<div class="daytabs" id="daytabs"></div>
+<div id="aulaboxe"></div>
+</section>
+
+<section id="alunos" class="page">
+<h1>👥 Alunos</h1>
+<div class="card"><input id="nome" placeholder="Nome do aluno"><select id="modal"><option>Boxe</option><option>Jiu-Jitsu</option><option>Funcional</option><option>Personal Fight</option></select><button class="primary" onclick="addAluno()">Adicionar aluno</button></div>
+<div id="lista"></div>
+</section>
+
+<section id="agenda" class="page">
+<h1>📅 Agenda</h1>
+<div class="grid"><div class="card"><h3>18:30</h3><p>Jiu-Jitsu Infantil</p></div><div class="card"><h3>19:30</h3><p>Funcional</p></div><div class="card"><h3>20:30</h3><p>Personal Fight</p></div></div>
+<p class="muted">Versão local: alunos ficam salvos neste aparelho.</p>
+</section>
+</main><footer>HERRE PROF • TEAM CBFAMILYBRASIL</footer>
+<script>
+const aulas={
+"SEGUNDA":{foco:"BASE + 1–2",objetivo:"Fundamentos e precisão",seq:"JAB → DIRETO → SAÍDA",man:["Jab","Direto","Jab + direto","Jab + direto + saída"],trans:"Aluno 1 faz a sequência na manopla. Depois repete com o parceiro com toque controlado. Trocam as funções.",final:"3 rounds de 1 min: jab + direto + movimentação."},
+"TERÇA":{foco:"ATAQUE + DEFESA",objetivo:"Reação e leitura",seq:"JAB → DIRETO → ESQUIVA → DIRETO",man:["Jab + direto","Jab + direto + esquiva","Jab + direto + cruzado","Jab + direto + esquiva + direto"],trans:"Parceiro responde com jab leve. O aluno faz a esquiva e contra-ataca. Trocam as funções.",final:"3 rounds de 1 min: combinação + esquiva."},
+"QUARTA":{foco:"COMBINAÇÃO",objetivo:"Fluidez e controle",seq:"JAB → DIRETO → CRUZADO → ESQUIVA → SAÍDA",man:["Jab + direto + cruzado","Jab + direto + cruzado + direto","Combinação + esquiva","Combinação + saída lateral"],trans:"O parceiro oferece uma resposta controlada. O aluno ataca, defende e sai sem perder a base.",final:"3 rounds de 1 min: combinação livre com controle."},
+"QUINTA":{foco:"DISTÂNCIA + CONTRA-ATAQUE",objetivo:"Tempo, distância e leitura",seq:"JAB → RECUO → JAB / ESQUIVA → DIRETO",man:["Jab + recuo","Jab + direto + saída","Jab + direto + esquiva","Jab + direto + esquiva + contra-ataque"],trans:"Parceiro avança lentamente. Trabalhar distância, esquiva e resposta. Trocam as funções.",final:"3 rounds de 1 min: contra-ataque + movimentação."},
+"SEXTA":{foco:"INTEGRAÇÃO",objetivo:"Aplicar tudo na prática",seq:"JAB → DIRETO → CRUZADO → ESQUIVA → DIRETO → SAÍDA",man:["Sequência completa devagar","Aumentar velocidade sem força","Manopla com reação","Sequência completa"],trans:"Round 1: jab. Round 2: jab + direto. Round 3: combinação. Round 4: combinação + defesa. Round 5: aplicação livre controlada.",final:"5 rounds de 1 min, alternando funções e mantendo técnica."}
+};
+let dia="SEGUNDA",t=60,iv=null;
+function show(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));if(id==="boxe")renderAula();scrollTo(0,0)}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>show(b.dataset.page));
+function renderTabs(){document.getElementById("daytabs").innerHTML=Object.keys(aulas).map(d=>`<button class="daybtn ${d===dia?'active':''}" onclick="setDia('${d}')">${d}</button>`).join("")}
+function setDia(d){dia=d;resetTimer();renderTabs();renderAula()}
+function renderAula(){renderTabs();let a=aulas[dia];document.getElementById("aulaboxe").innerHTML=`
+<div class="card"><span class="badge">${dia} • AULA 50–60 MIN</span><h3>${a.foco}</h3><p class="muted">Objetivo: ${a.objetivo}</p><p class="seq">${a.seq}</p></div>
+<div class="card"><h3>🥊 MANOPLA — 15 MIN</h3><div class="steps">${a.man.map((x,i)=>`<div class="step"><b>${i+1}</b>${x}</div>`).join("")}</div></div>
+<div class="card"><h3>🔄 TRANSFERÊNCIA — 15–20 MIN</h3><p>${a.trans}</p><div class="row"><span class="badge">ATACA</span><span class="badge">DEFENDE</span><span class="badge">TROCA</span></div></div>
+<div class="card"><h3>⏱️ ROUND</h3><div id="timer" class="timer">01:00</div><div class="row"><button class="primary" onclick="startTimer()">Iniciar</button><button onclick="resetTimer()">Resetar</button></div></div>
+<div class="card"><h3>🎯 FINAL</h3><p>${a.final}</p><p class="muted">Sempre com controle técnico, respeito ao parceiro e foco na execução.</p></div>`}
+function paint(){let e=document.getElementById("timer");if(e)e.textContent=String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0")}
+function startTimer(){if(iv)return;iv=setInterval(()=>{t--;paint();if(t<=0){clearInterval(iv);iv=null;t=60;paint();alert("Round finalizado! TROQUE AS FUNÇÕES.");}},1000)}
+function resetTimer(){clearInterval(iv);iv=null;t=60;paint()}
+function addAluno(){let n=document.getElementById("nome").value.trim(),m=document.getElementById("modal").value;if(!n)return;let a=JSON.parse(localStorage.alunos||"[]");a.push({n,m});localStorage.alunos=JSON.stringify(a);document.getElementById("nome").value="";render()}
+function render(){let a=JSON.parse(localStorage.alunos||"[]");document.getElementById("lista").innerHTML=a.map((x,i)=>`<div class="card"><b>${x.n}</b><br><span class="badge">${x.m}</span> <button onclick="delAluno(${i})">Excluir</button></div>`).join("")}
+function delAluno(i){let a=JSON.parse(localStorage.alunos||"[]");a.splice(i,1);localStorage.alunos=JSON.stringify(a);render()}
+renderAula();render();
+</script>
+</body></html>
