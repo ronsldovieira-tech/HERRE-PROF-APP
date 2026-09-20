@@ -610,7 +610,7 @@ function excluirMovimentoAluno(i){
 
 function dataFinanceiro(f){
 
-  const raw=f.dataPagamento || f.data || "";
+  const raw=f.dataPagamento || f.data || f.vencimento || "";
 
   if(!raw) return null;
 
