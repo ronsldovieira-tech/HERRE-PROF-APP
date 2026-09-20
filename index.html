@@ -839,7 +839,7 @@ criarPaginaBalancos();
   const CHAVE_FIN = "herre_prof_financeiro";
 
   function carregarFinanceiro(){
-    return JSON.parse(localStorage.getItem(CHAVE_FIN) || "[]");
+    return JSON.parse(localStorage.getItem(CHAVE_FIN) || localStorage.getItem("financeiro") || "[]");
   }
 
   function salvarFinanceiro(lista){
