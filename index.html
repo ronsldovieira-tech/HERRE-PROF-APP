@@ -98,7 +98,14 @@ footer{text-align:center;color:#777;padding:30px}.steps{display:grid;grid-templa
 <input id="finAluno" placeholder="Nome do aluno">
 
 <input id="finValor" type="number" placeholder="Mensalidade (R$)" inputmode="decimal">
-
+<label>Modalidade</label>
+<select id="finModalidade">
+  <option value="Funcional">Funcional</option>
+  <option value="Aeróbico">Aeróbico</option>
+  <option value="Jiu-Jitsu Infantil">Jiu-Jitsu Infantil</option>
+  <option value="Boxe Infantil">Boxe Infantil</option>
+  <option value="Boxe Adulto">Boxe Adulto</option>
+</select>
 <label>Vencimento</label>
 <input id="finVencimento" type="date">
 
@@ -215,7 +222,7 @@ let nome=document.getElementById("finAluno").value.trim();
 let valor=parseFloat(document.getElementById("finValor").value);
 let vencimento=document.getElementById("finVencimento").value;
 let forma=document.getElementById("finForma").value;
-
+let modalidade=document.getElementById("finModalidade").value;
 if(!nome||!valor||!vencimento){
 alert("Preencha aluno, valor e vencimento.");
 return;
@@ -228,7 +235,8 @@ aluno:nome,
 valor:valor,
 vencimento:vencimento,
 forma:forma,
-pago:false,
+modalidade: modalidade,
+  pago:false,
 dataPagamento:""
 });
 
@@ -237,7 +245,7 @@ localStorage.financeiro=JSON.stringify(f);
 document.getElementById("finAluno").value="";
 document.getElementById("finValor").value="";
 document.getElementById("finVencimento").value="";
-
+document.getElementById("finModalidade").value="Funcional";
 renderFinanceiro();
 }
 
@@ -250,6 +258,7 @@ f.map((x,i)=>{
 let status=x.pago?"PAGO":(x.vencimento<hoje?"ATRASADO":"PENDENTE");
 return `<div class="card">
 <b>${x.aluno}</b><br>
+🥋 ${x.modalidade}<br>
 💰 R$ ${Number(x.valor).toFixed(2).replace(".",",")}<br>
 📅 Vencimento: ${x.vencimento}<br>
 💳 ${x.forma}<br>
