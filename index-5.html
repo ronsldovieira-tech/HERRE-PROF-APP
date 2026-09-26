@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HERRE PROF — Fight & Defense</title>
+<style>
+:root{--bg:#070707;--panel:#111;--gold:#c9a24a;--gold2:#f0d27a;--white:#f4f4f4;--muted:#aaa}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--white);font-family:Arial,Helvetica,sans-serif}
+a{text-decoration:none;color:inherit}.container{max-width:1180px;margin:auto;padding:0 22px}
+header{position:sticky;top:0;z-index:10;background:rgba(7,7,7,.94);border-bottom:1px solid #2a2112;backdrop-filter:blur(10px)}
+.nav{height:76px;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:900;letter-spacing:2px;font-size:23px}.brand span{color:var(--gold)}
+nav{display:flex;gap:24px;font-size:13px;font-weight:700}nav a:hover{color:var(--gold2)}
+.btn{display:inline-block;background:var(--gold);color:#090909;font-weight:900;padding:14px 20px;border-radius:5px;text-transform:uppercase;letter-spacing:.6px}.btn:hover{background:var(--gold2)}
+.hero{min-height:650px;display:flex;align-items:center;background:radial-gradient(circle at 75% 35%,#2b2110 0,#0b0b0b 38%,#070707 70%);position:relative;overflow:hidden}
+.hero:after{content:"H";position:absolute;right:2%;top:8%;font-size:520px;font-weight:900;color:rgba(201,162,74,.055);line-height:1}
+.hero-content{position:relative;z-index:2;max-width:680px;padding:85px 0}.eyebrow{color:var(--gold2);font-weight:800;letter-spacing:3px;font-size:13px}.hero h1{font-size:clamp(48px,8vw,94px);line-height:.9;margin:18px 0}.hero h1 span{color:var(--gold)}.hero p{font-size:19px;color:#ccc;line-height:1.6;max-width:590px}.chips{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0}.chip{border:1px solid #4d3b1b;padding:9px 12px;color:var(--gold2);font-size:12px;font-weight:800}
+section{padding:78px 0}.section-title{font-size:38px;margin:0 0 12px}.section-title span{color:var(--gold)}.lead{color:var(--muted);max-width:650px;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:35px}.card{background:linear-gradient(145deg,#151515,#0d0d0d);border:1px solid #292929;padding:25px;min-height:165px;border-radius:8px}.card:hover{border-color:#6b5425;transform:translateY(-3px);transition:.2s}.icon{font-size:30px}.card h3{margin:14px 0 8px}.card p{color:#999;font-size:14px;line-height:1.5}
+.method{background:#0e0e0e;border-top:1px solid #211b10;border-bottom:1px solid #211b10}.quote{font-size:clamp(28px,5vw,56px);font-weight:900;max-width:900px;line-height:1.02}.quote span{color:var(--gold)}
+.schedule{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:32px}.day{background:#111;border:1px solid #272727;border-radius:7px;overflow:hidden}.day h4{margin:0;padding:14px;background:#181818;color:var(--gold2);text-align:center}.day p{padding:0 14px;color:#bbb;font-size:13px;line-height:1.7}
+.cta{background:linear-gradient(110deg,#18130a,#0c0c0c);border:1px solid #4a391a;border-radius:12px;padding:48px;display:flex;justify-content:space-between;align-items:center;gap:25px}.cta h2{margin:0;font-size:38px}.cta p{color:#aaa}
+footer{border-top:1px solid #29200f;padding:35px 0;color:#888;font-size:13px}.footer-line{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+@media(max-width:800px){nav{display:none}.grid{grid-template-columns:1fr 1fr}.schedule{grid-template-columns:1fr}.hero{min-height:600px}.cta{display:block}.cta .btn{margin-top:20px}}
+@media(max-width:480px){.grid{grid-template-columns:1fr}.hero h1{font-size:55px}.section-title{font-size:31px}}
+</style>
+</head>
+<body>
+<header><div class="container nav">
+<a class="brand" href="#">HERRE <span>PROF</span></a>
+<nav><a href="#modalidades">Modalidades</a><a href="#metodo">Método</a><a href="#horarios">Horários</a><a href="#historia">História</a><a href="#contato">Contato</a></nav>
+<a class="btn" href="#contato">Quero treinar</a>
+</div></header>
+
+<main>
+<section class="hero"><div class="container hero-content">
+<div class="eyebrow">TEAM CBFAMILYBRASIL</div>
+<h1>FIGHT<br><span>AND DEFENSE</span></h1>
+<p>Treinamento de combate, condicionamento e desenvolvimento físico através do Jiu-Jitsu, Boxe, Funcional e Fight & Defense.</p>
+<div class="chips"><div class="chip">PERFORMANCE</div><div class="chip">FORÇA</div><div class="chip">EVOLUÇÃO</div></div>
+<a class="btn" href="#contato">Comece seu treino</a>
+</div></section>
+
+<section id="modalidades"><div class="container">
+<h2 class="section-title">Nossas <span>modalidades</span></h2><p class="lead">Treinamentos para diferentes objetivos, níveis e idades.</p>
+<div class="grid">
+<div class="card"><div class="icon">🥋</div><h3>Jiu-Jitsu</h3><p>Técnica, estratégia, disciplina e defesa pessoal.</p></div>
+<div class="card"><div class="icon">🥊</div><h3>Boxe</h3><p>Fundamentos, combinações, movimentação e condicionamento.</p></div>
+<div class="card"><div class="icon">💪</div><h3>Funcional</h3><p>Força, potência, resistência e preparação física.</p></div>
+<div class="card"><div class="icon">🛡️</div><h3>Fight & Defense</h3><p>Treinamento aplicado de luta e defesa.</p></div>
+<div class="card"><div class="icon">👊</div><h3>Personal Fight</h3><p>Treino individual planejado para seu objetivo.</p></div>
+<div class="card"><div class="icon">👦</div><h3>Infantil</h3><p>Jiu-Jitsu e Boxe com foco em disciplina e desenvolvimento.</p></div>
+<div class="card"><div class="icon">🏃</div><h3>Aeróbico</h3><p>Condicionamento cardiovascular e resistência.</p></div>
+<div class="card"><div class="icon">🔥</div><h3>HERRE PROF Performance</h3><p>Circuitos e métodos próprios para evolução física.</p></div>
+</div></div></section>
+
+<section id="metodo" class="method"><div class="container">
+<div class="eyebrow">MÉTODO HERRE PROF</div>
+<p class="quote">DISCIPLINA <span>FORJA.</span><br>FOCO <span>TRANSFORMA.</span><br>CONSTÂNCIA <span>VENCE.</span></p>
+<p class="lead">Uma metodologia que combina luta, preparação física, potência, mobilidade e condicionamento em treinos objetivos e progressivos.</p>
+</div></section>
+
+<section id="horarios"><div class="container">
+<h2 class="section-title">Grade de <span>treinos</span></h2><p class="lead">Consulte os horários disponíveis e escolha sua modalidade.</p>
+<div class="schedule">
+<div class="day"><h4>SEGUNDA</h4><p>18:30 Jiu-Jitsu Infantil<br>19:30 Funcional<br>Personal Fight</p></div>
+<div class="day"><h4>TERÇA</h4><p>06:00 Aeróbico<br>07:30 Luta & Defesa<br>18:30 Boxe Infantil<br>19:30 Aeróbico</p></div>
+<div class="day"><h4>QUARTA</h4><p>06:00 Funcional<br>08:30 Projeto<br>Personal Fight</p></div>
+<div class="day"><h4>QUINTA</h4><p>19:30 Aeróbico<br>Personal Fight</p></div>
+<div class="day"><h4>SEXTA</h4><p>06:00 Funcional<br>08:30 Projeto<br>19:30 Funcional<br>20:30 Sparring</p></div>
+</div></div></section>
+
+<section id="historia" class="method"><div class="container">
+<h2 class="section-title">A história da <span>HERRE PROF</span></h2>
+<p class="lead">Uma identidade construída através da experiência nas artes marciais, preparação física e ensino. A TEAM CBFAMILYBRASIL representa uma filosofia de treino baseada em disciplina, técnica e evolução constante.</p>
+</div></section>
+
+<section id="contato"><div class="container"><div class="cta">
+<div><h2>Pronto para treinar?</h2><p>Entre em contato e encontre a modalidade certa para você.</p></div>
+<a class="btn" href="https://wa.me/5521984615981?text=Ol%C3%A1!%20Quero%20conhecer%20a%20HERRE%20PROF%20e%20saber%20sobre%20os%20treinos." target="_blank">Falar no WhatsApp</a>
+</div></div></section>
+</main>
+
+<footer><div class="container footer-line"><div><strong>HERRE PROF — TEAM CBFAMILYBRASIL</strong></div><div>BOXE • JIU-JITSU • FUNCIONAL • FIGHT & DEFENSE</div></div></footer>
+</body></html>
