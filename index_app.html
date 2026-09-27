@@ -28,6 +28,16 @@ footer{text-align:center;color:#777;padding:30px}.steps{display:grid;grid-templa
 .small{font-size:12px}
 .schedule{display:grid;gap:10px}.slot{background:#191919;border:1px solid #3b3b3b;border-radius:12px;padding:12px}.slot .time{color:#d7aa35;font-size:20px;font-weight:900}.slot .name{font-weight:800;margin-top:3px}.slot .meta{color:#aaa;font-size:12px;margin-top:3px}.empty{color:#777;font-style:italic}
 </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://kxfrxhiwnovcmpvkptme.supabase.co";
+
+const SUPABASE_ANON_KEY = "sb_publishable_AxaaLza108y-9PAZ0UoLBQ_5TRDA_AD"
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+</script>
 </head>
 <body>
 <header><div class="logo">👑 HP HERRE PROF</div><div class="sub">FIGHT AND DEFENSE • PERFORMANCE • FORÇA • EVOLUÇÃO</div></header>
