@@ -137,16 +137,16 @@ footer{text-align:center;color:#777;padding:30px}.steps{display:grid;grid-templa
 <script>
   const SENHA_PROFESSOR = "HERRE2026";
 
-if (sessionStorage.getItem("herre_prof_auth") !== "ok") {
-  const senha = prompt("🔐 ÁREA DO PROFESSOR\n\nDigite a senha:");
 
-  if (senha === SENHA_PROFESSOR) {
-    sessionStorage.setItem("herre_prof_auth", "ok");
-  } else {
-    alert("❌ Senha incorreta.");
-    window.location.href = "index.html";
-  }
+
+const senha = prompt("🔐 ÁREA DO PROFESSOR\n\nDigite a senha:");
+
+if (senha !== SENHA_PROFESSOR) {
+  alert("❌ Senha incorreta.");
+  window.location.href = "index.html";
 }
+
+
 const personalFight={
 "SEGUNDA":[["15:00","João"],["16:00","Raphael"],["17:00","Juliana"]],
 "TERÇA":[["14:30","Pedro"],["15:30","Roberta"],["16:30","José"],["17:30","Juliana"],["18:30","Thayane"],["20:30","Wallace"]],
