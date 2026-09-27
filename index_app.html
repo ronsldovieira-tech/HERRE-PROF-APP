@@ -145,7 +145,14 @@ const supabaseClient = window.supabase.createClient(
 </main><footer>HERRE PROF • TEAM CBFAMILYBRASIL</footer>
 
 <script>
-  
+  const SENHA_PROFESSOR = "HERRE2026";
+
+const senha = prompt("🔐 ÁREA DO PROFESSOR\n\nDigite a senha:");
+
+if (senha !== SENHA_PROFESSOR) {
+  alert("❌ Senha incorreta.");
+  window.location.href = "index.html";
+}
 
 
 const personalFight={
