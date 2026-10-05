@@ -667,51 +667,13 @@ function renderPersonal(d,btn){
   document.getElementById("pfDia").value=d;
 }
 
-/* Atualiza a agenda geral usando os horários editáveis */
 
-function renderAgenda(){
 
-  let out=[];
 
-  let dados=carregarPersonalFight();
 
-  Object.entries(dados).forEach(([d,arr])=>{
-    arr.forEach(x=>{
-      out.push([d,x[0],x[1],"Personal Fight"]);
-    });
-  });
 
-  aulasJiuJitsu.forEach(x=>{
-    out.push([x[0],x[1],x[2],"Jiu-Jitsu"]);
-  });
 
-  [
-    ["TERÇA","07:30","Boxe","Boxe"],
-    ["TERÇA","18:30","Boxe Infantil","Boxe Infantil"],
-    ["TERÇA","20:30","Boxe","Boxe"],
-    ["QUINTA","07:30","Boxe","Boxe"],
-    ["QUINTA","20:30","Boxe","Boxe"],
-    ["SEGUNDA","19:30","Funcional","Funcional"],
-    ["QUARTA","06:00","Funcional","Funcional"],
-    ["SEXTA","06:00","Funcional","Funcional"],
-    ["SEXTA","19:30","Funcional","Funcional"]
-  ].forEach(x=>out.push(x));
 
-  out.sort((a,b)=>a[0].localeCompare(b[0]) || a[1].localeCompare(b[1]));
-
-  document.getElementById("agendaLista").innerHTML=
-    '<div class="schedule">'+
-    out.map(x=>`
-      <div class="slot">
-        <div class="time">${x[1]}</div>
-        <div class="name">${x[2]}</div>
-        <div class="meta">${x[0]} • ${x[3]}</div>
-      </div>
-    `).join("")+
-    '</div>';
-}
-
-/* Inicialização */
 
 carregarPersonalFight();
 renderPersonal("SEGUNDA",document.querySelector("#personal .daybtn"));
