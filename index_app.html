@@ -316,7 +316,170 @@ function excluirMensalidade(i){ let f=JSON.parse(localStorage.financeiro||"[]");
 function render(){let a=JSON.parse(localStorage.alunos||"[]");document.getElementById("lista").innerHTML=a.length?a.map((x,i)=>`<div class="card"><b>${x.n}</b><br><span class="badge">${x.m}</span> <span class="badge">${x.d||"—"} • ${x.h||"—"}</span><br><button onclick="delAluno(${i})">Excluir</button></div>`).join(""):"<div class='card empty'>Nenhum aluno cadastrado ainda.</div>"}
 function delAluno(i){let a=JSON.parse(localStorage.alunos||"[]");a.splice(i,1);localStorage.alunos=JSON.stringify(a);render()}
 function renderPersonal(d,btn){document.querySelectorAll('#personal .daybtn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');let arr=personalFight[d]||[];document.getElementById('personalLista').innerHTML=arr.length?'<div class="schedule">'+arr.map(x=>`<div class="slot"><div class="time">${x[0]}</div><div class="name">${x[1]}</div><div class="meta">PERSONAL FIGHT</div></div>`).join('')+'</div>':'<div class="card empty">Nenhum Personal Fight cadastrado para este dia.</div>'}
-function renderAgenda(){const out=carregarAgenda();const ordem={SEGUNDA:1,TERÇA:2,QUARTA:3,QUINTA:4,SEXTA:5};out.sort((a,b)=>(ordem[a.dia]||9)-(ordem[b.dia]||9)||a.hora.localeCompare(b.hora));document.getElementById("agendaLista").innerHTML=out.length?'<div class="schedule">'+out.map((x,i)=>`<div class="slot"><div class="time">${x.hora}</div><div class="name">${x.nome}</div><div class="meta">${x.dia} • ${x.modalidade}</div><div class="agenda-actions"><button onclick="editarAgenda(${i})">✏️ Editar</button><button onclick="excluirAgenda(${i})">🗑️ Excluir</button></div></div>`).join("")+'</div>':'<div class="card empty">Nenhum horário cadastrado.</div>';}
+const AGENDA_STORAGE="herre_agenda_v1";
+
+function carregarAgenda(){
+  const salvo=localStorage.getItem(AGENDA_STORAGE);
+  if(salvo){
+    try{return JSON.parse(salvo);}
+    catch(e){}
+  }
+
+  const base=[];
+
+  Object.entries(personalFight).forEach(([d,arr])=>{
+    arr.forEach(x=>{
+      base.push({
+        dia:d,
+        hora:x[0],
+        nome:x[1],
+        modalidade:"Personal Fight"
+      });
+    });
+  });
+
+  aulasJiuJitsu.forEach(x=>{
+    base.push({
+      dia:x[0],
+      hora:x[1],
+      nome:x[2],
+      modalidade:"Jiu-Jitsu"
+    });
+  });
+
+  [
+    ["TERÇA","07:30","Boxe","Boxe"],
+    ["TERÇA","18:30","Boxe Infantil","Boxe Infantil"],
+    ["TERÇA","20:30","Boxe","Boxe"],
+    ["QUINTA","07:30","Boxe","Boxe"],
+    ["QUINTA","20:30","Boxe","Boxe"],
+    ["SEGUNDA","19:30","Funcional","Funcional"],
+    ["QUARTA","06:00","Funcional","Funcional"],
+    ["SEXTA","06:00","Funcional","Funcional"],
+    ["SEXTA","19:30","Funcional","Funcional"]
+  ].forEach(x=>{
+    base.push({
+      dia:x[0],
+      hora:x[1],
+      nome:x[2],
+      modalidade:x[3]
+    });
+  });
+
+  localStorage.setItem(AGENDA_STORAGE,JSON.stringify(base));
+  return base;
+}
+
+function salvarAgenda(dados){
+  localStorage.setItem(AGENDA_STORAGE,JSON.stringify(dados));
+}
+
+function adicionarAgenda(){
+  const nome=prompt("Nome da aula ou aluno:");
+  if(nome===null)return;
+
+  const dia=prompt(
+    "Dia (SEGUNDA, TERÇA, QUARTA, QUINTA ou SEXTA):",
+    "SEGUNDA"
+  );
+  if(dia===null)return;
+
+  const hora=prompt("Horário (ex.: 18:30):","18:30");
+  if(hora===null)return;
+
+  const modalidade=prompt("Modalidade:","Funcional");
+  if(modalidade===null)return;
+
+  const dados=carregarAgenda();
+
+  dados.push({
+    nome:nome.trim(),
+    dia:dia.trim().toUpperCase(),
+    hora:hora.trim(),
+    modalidade:modalidade.trim()
+  });
+
+  salvarAgenda(dados);
+  renderAgenda();
+}
+
+function editarAgenda(index){
+  const dados=carregarAgenda();
+  const item=dados[index];
+
+  if(!item)return;
+
+  let v=prompt("Nome da aula ou aluno:",item.nome);
+  if(v===null)return;
+  item.nome=v.trim();
+
+  v=prompt("Dia:",item.dia);
+  if(v===null)return;
+  item.dia=v.trim().toUpperCase();
+
+  v=prompt("Horário:",item.hora);
+  if(v===null)return;
+  item.hora=v.trim();
+
+  v=prompt("Modalidade:",item.modalidade);
+  if(v===null)return;
+  item.modalidade=v.trim();
+
+  salvarAgenda(dados);
+  renderAgenda();
+}
+
+function excluirAgenda(index){
+  const dados=carregarAgenda();
+  const item=dados[index];
+
+  if(!item)return;
+
+  if(!confirm(
+    "Excluir "+item.nome+" — "+item.dia+" "+item.hora+"?"
+  ))return;
+
+  dados.splice(index,1);
+  salvarAgenda(dados);
+  renderAgenda();
+}
+
+function renderAgenda(){
+  const out=carregarAgenda();
+
+  const ordem={
+    SEGUNDA:1,
+    TERÇA:2,
+    QUARTA:3,
+    QUINTA:4,
+    SEXTA:5
+  };
+
+  out.sort((a,b)=>
+    (ordem[a.dia]||9)-(ordem[b.dia]||9) ||
+    a.hora.localeCompare(b.hora)
+  );
+
+  document.getElementById("agendaLista").innerHTML=
+    '<div style="margin-bottom:12px">'+
+    '<button class="primary" onclick="adicionarAgenda()">➕ Adicionar horário</button>'+
+    '</div>'+
+    (out.length
+      ? '<div class="schedule">'+
+        out.map((x,i)=>
+          `<div class="slot">
+            <div class="time">${x.hora}</div>
+            <div class="name">${x.nome}</div>
+            <div class="meta">${x.dia} • ${x.modalidade}</div>
+            <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
+              <button onclick="editarAgenda(${i})">✏️ Editar</button>
+              <button onclick="excluirAgenda(${i})">🗑️ Excluir</button>
+            </div>
+          </div>`
+        ).join("")+
+        '</div>'
+      : '<div class="card">Nenhum horário cadastrado.</div>');
+}
 renderAula();renderFuncional();
 /* ===== GERENCIADOR PERSONAL FIGHT ===== */
 
